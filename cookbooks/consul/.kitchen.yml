@@ -1,0 +1,48 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: ubuntu-14.04
+  - name: ubuntu-12.04
+  - name: centos-7.1
+  - name: centos-6.6
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[consul::default]
+    attributes:
+      consul:
+        config: &default-config
+          bootstrap: true
+          server: true
+          datacenter: FortMeade
+          encrypt: CGXC2NsXW4AvuB4h5ODYzQ==
+    excludes:
+      - windows-2012r2
+  - name: source
+    run_list:
+      - recipe[consul::default]
+    attributes:
+      consul:
+        config: *default-config
+        service:
+          install_method: source
+    excludes:
+      - windows-2012r2
+  - name: package
+    run_list:
+      - recipe[consul::default]
+    attributes:
+      consul:
+        config: *default-config
+        service:
+          install_method: package
+    excludes:
+      - centos-7.1
+      - centos-6.6
